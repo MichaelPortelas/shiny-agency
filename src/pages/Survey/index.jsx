@@ -66,22 +66,20 @@ function Survey() {
   const questionNumberInt = parseInt(questionNumber)
   const prevQuestionNumber = questionNumberInt === 1 ? 1 : questionNumberInt - 1
   const nextQuestionNumber = questionNumberInt + 1
-
   const { theme } = useTheme()
+
   const { saveAnswers, answers } = useContext(SurveyContext)
 
-  const { data, isLoading, error } = useFetch('http://localhost:8000/survey')
-  const surveyData = data?.surveyData
-  
   function saveReply(answer) {
     saveAnswers({ [questionNumber]: answer })
   }
+  const { data, isLoading, error } = useFetch('http://localhost:8000/survey')
+  const surveyData = data?.surveyData   
 
   if(error){
     return <span>Il y a un problème</span>
   }
 
-  
   return (
     <SurveyContainer>
       <QuestionTitle theme={theme}>Question {questionNumber}</QuestionTitle>
@@ -89,30 +87,28 @@ function Survey() {
         <Loader />
       ) : (
         <QuestionContent theme={theme}>
-            {surveyData && surveyData[questionNumber]}
+            {surveyData[questionNumber]}
         </QuestionContent>
       )}
-      {answers && (
-        <ReplyWrapper>
-          <ReplyBox
-            onClick={() => saveReply(true)}
-            isSelected={answers[questionNumber] === true}
-            theme={theme}
-          >
-            Oui
-          </ReplyBox>
-          <ReplyBox
-            onClick={() => saveReply(false)}
-            isSelected={answers[questionNumber] === false}
-            theme={theme}
-          >
-            Non
-          </ReplyBox>
-        </ReplyWrapper>
-      )}
+      <ReplyWrapper>
+        <ReplyBox
+          onClick={() => saveReply(true)}
+          isSelected={answers[questionNumber] === true}
+          theme={theme}
+        >
+          Oui
+        </ReplyBox>
+        <ReplyBox
+          onClick={() => saveReply(false)}
+          isSelected={answers[questionNumber] === false}
+          theme={theme}
+        >
+          Non
+        </ReplyBox>
+      </ReplyWrapper>
       <LinkWrapper theme={theme}>
         <Link to={`/survey/${prevQuestionNumber}`}>Précédent</Link>
-        {surveyData[questionNumberInt + 1] ? (
+        {surveyData && surveyData[questionNumberInt + 1] ? (
           <Link to={`/survey/${nextQuestionNumber}`}>Suivant</Link>
         ) : (
           <Link to="/results">Résultats</Link>
